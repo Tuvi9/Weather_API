@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
+const { error } = require('console');
 
 
 app.set('view engine', 'ejs')
@@ -25,7 +26,8 @@ const getWeatherDataPromise = (url) => {
             let result = {
                 description: description,
                 city: city,
-                temp: temp
+                temp: temp,
+                error: null
             }
             resolve(result)
         })
@@ -68,6 +70,9 @@ app.all('/', function (req, res) {
     getWeatherDataPromise(url)
     .then(data => {
         res.render('form.ejs', data)
+    })
+    .catch(error => {
+        res.render('form.ejs', {error: 'Problem with getting data, try again'})
     })
 })
 
